@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
             ..getScienceData(),
         ),
         BlocProvider(
-            create: (context) => ShopCubit()..getHomeData()..getCategories(),
+            create: (context) => ShopCubit()..getHomeData()..getCategories()..getFavorites(),
         ),
         BlocProvider(
             create: (context) => AppCubit()

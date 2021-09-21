@@ -6,6 +6,7 @@ import 'package:flutter_appaa/layout/shop_app/cubit/cubit.dart';
 import 'package:flutter_appaa/layout/shop_app/cubit/states.dart';
 import 'package:flutter_appaa/models/shop_app/categories_model.dart';
 import 'package:flutter_appaa/models/shop_app/home_model.dart';
+import 'package:flutter_appaa/shared/component/components.dart';
 import 'package:flutter_appaa/shared/network/styles/colors.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +16,13 @@ class ProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ShopCubit, ShopStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ShopSuccessChangeFavoriteState) {
+          if (!state.model.status) {
+            showToast(text: state.model.message, state: ToastStates.ERROR);
+          }
+        }
+      },
       builder: (context, state) {
         return ConditionalBuilder(
           condition: ShopCubit.get(context).homeModel != null &&
@@ -36,8 +43,7 @@ class ProductsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
-              items: model.data.banners
-                  .map(
+              items: model.data.banners.map(
                     (e) => Image(
                       image: NetworkImage('${e.image}'),
                       width: double.infinity,

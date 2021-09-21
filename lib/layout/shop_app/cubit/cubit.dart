@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_appaa/layout/shop_app/cubit/states.dart';
 import 'package:flutter_appaa/models/shop_app/categories_model.dart';
 import 'package:flutter_appaa/models/shop_app/change_favorite_model.dart';
+import 'package:flutter_appaa/models/shop_app/favorite_model.dart';
 import 'package:flutter_appaa/models/shop_app/home_model.dart';
 import 'package:flutter_appaa/modules/shop_app/categories/categories_screen.dart';
 import 'package:flutter_appaa/modules/shop_app/favourites/favourites_screen.dart';
@@ -78,9 +79,10 @@ class ShopCubit extends Cubit<ShopStates> {
   }
 
   ChangeFavoritesModel changeFavoritesModel;
+
   void changeFavorites(int productId) {
-    favorites[productId]=!favorites[productId];
-    emit(ShopSuccessChangeFavoriteState());
+    favorites[productId] = !favorites[productId];
+    emit(ShopChangeFavoriteState());
 
     DioHelper.postData(
       url: FAVORITES,
@@ -89,11 +91,36 @@ class ShopCubit extends Cubit<ShopStates> {
       },
       token: token,
     ).then((value) {
-      changeFavoritesModel=ChangeFavoritesModel.fromJson(value.data);
+      changeFavoritesModel = ChangeFavoritesModel.fromJson(value.data);
       print(value.data);
-      emit(ShopSuccessChangeFavoriteState());
+      if (!changeFavoritesModel.status) {
+        favorites[productId] = !favorites[productId];
+      }else
+        {
+          getFavorites();
+        }
+      emit(ShopSuccessChangeFavoriteState(changeFavoritesModel));
     }).catchError((error) {
       emit(ShopErrorChangeFavoriteState());
+    });
+  }
+
+  FavoritesModel favoritesModel;
+
+  void getFavorites() {
+    emit(ShopLoadingGetFavoritesState());
+    DioHelper.getData(
+      url: FAVORITES,
+      lang: 'en',
+      token: token,
+    ).then((value) {
+      favoritesModel = FavoritesModel.fromJson(value.data);
+      emit(ShopSuccessGetFavoritesState());
+    }).catchError((error) {
+      print(
+        error.toString(),
+      );
+      emit(ShopErrorGetFavoritesState());
     });
   }
 }
