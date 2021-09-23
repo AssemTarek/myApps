@@ -5,6 +5,7 @@ import 'package:flutter_appaa/modules/shop_app/login/cubit/cubit.dart';
 import 'package:flutter_appaa/modules/shop_app/login/cubit/states.dart';
 import 'package:flutter_appaa/modules/shop_app/register/shop_register_screen.dart';
 import 'package:flutter_appaa/shared/component/components.dart';
+import 'package:flutter_appaa/shared/component/constants.dart';
 import 'package:flutter_appaa/shared/network/local/cashe_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,11 +13,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ShopLoginScreen extends StatelessWidget {
   // const ShopLoginScreen({Key? key}) : super(key: key);
   var formKey = GlobalKey<FormState>();
-
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
 
     return BlocProvider(
       create: (BuildContext context) => ShopLoginCubit(),
@@ -26,12 +26,19 @@ class ShopLoginScreen extends StatelessWidget {
             if (state.loginModel.status) {
               print(state.loginModel.message);
               print(state.loginModel.data.token);
-              CacheHelper.saveData(key: 'token', value: state.loginModel.data.token).then((value){
-                navigateAndFinish(context, ShopLayoutScreen(),);
+              CacheHelper.saveData(
+                      key: 'token', value: state.loginModel.data.token)
+                  .then((value) {
+                    token=state.loginModel.data.token;
+                navigateAndFinish(
+                  context,
+                  ShopLayoutScreen(),
+                );
               });
             } else {
               print(state.loginModel.message);
-              showToast(text: state.loginModel.message,state: ToastStates.ERROR);
+              showToast(
+                  text: state.loginModel.message, state: ToastStates.ERROR);
             }
           }
         },

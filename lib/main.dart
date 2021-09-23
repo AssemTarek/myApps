@@ -18,7 +18,7 @@ import 'package:flutter_appaa/modules/basics_app/login/Login_screen.dart';
 import 'package:flutter_appaa/modules/basics_app/users/Users_Screen.dart';
 import 'package:flutter_appaa/modules/basics_app/home/home_screen.dart';
 import 'package:flutter_appaa/modules/basics_app/messenger/massenger_screen.dart';
-import 'package:flutter_appaa/modules/shop_app/login/shop_login.dart';
+import 'package:flutter_appaa/modules/shop_app/login/shop_login_screen.dart';
 import 'package:flutter_appaa/shared/component/constants.dart';
 import 'package:flutter_appaa/shared/network/local/cashe_helper.dart';
 import 'package:flutter_appaa/shared/network/remote/dio_helper.dart';
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
             ..getScienceData(),
         ),
         BlocProvider(
-            create: (context) => ShopCubit()..getHomeData()..getCategories()..getFavorites(),
+            create: (context) => ShopCubit()..getHomeData()..getCategories()..getFavorites()..getUserData(),
         ),
         BlocProvider(
             create: (context) => AppCubit()

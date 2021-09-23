@@ -6,6 +6,7 @@ import 'package:flutter_appaa/models/shop_app/categories_model.dart';
 import 'package:flutter_appaa/models/shop_app/change_favorite_model.dart';
 import 'package:flutter_appaa/models/shop_app/favorite_model.dart';
 import 'package:flutter_appaa/models/shop_app/home_model.dart';
+import 'package:flutter_appaa/models/shop_app/login_model.dart';
 import 'package:flutter_appaa/modules/shop_app/categories/categories_screen.dart';
 import 'package:flutter_appaa/modules/shop_app/favourites/favourites_screen.dart';
 import 'package:flutter_appaa/modules/shop_app/products/products_screen.dart';
@@ -95,10 +96,9 @@ class ShopCubit extends Cubit<ShopStates> {
       print(value.data);
       if (!changeFavoritesModel.status) {
         favorites[productId] = !favorites[productId];
-      }else
-        {
-          getFavorites();
-        }
+      } else {
+        getFavorites();
+      }
       emit(ShopSuccessChangeFavoriteState(changeFavoritesModel));
     }).catchError((error) {
       emit(ShopErrorChangeFavoriteState());
@@ -121,6 +121,51 @@ class ShopCubit extends Cubit<ShopStates> {
         error.toString(),
       );
       emit(ShopErrorGetFavoritesState());
+    });
+  }
+
+  ShopLoginModel userModel;
+
+  void getUserData() {
+    emit(ShopLoadingGetUserDataState());
+    DioHelper.getData(
+      url: PROFILE,
+      lang: 'en',
+      token: token,
+    ).then((value) {
+      userModel = ShopLoginModel.fromJson(value.data);
+      emit(ShopSuccessGetUserDataState());
+    }).catchError((error) {
+      print(
+        error.toString(),
+      );
+      emit(ShopErrorGetUserDataState());
+    });
+  }
+
+  void updateUserData({
+    @required String name,
+    @required String email,
+    @required String phone,
+  }) {
+    emit(ShopLoadingUpdateUserState());
+    DioHelper.putData(
+      url: UPDATE_PROFILE,
+      lang: 'en',
+      token: token,
+      data: {
+        'name':name,
+        'email':email,
+        'phone':phone,
+      },
+    ).then((value) {
+      userModel = ShopLoginModel.fromJson(value.data);
+      emit(ShopSuccessUpdateUserState(userModel));
+    }).catchError((error) {
+      print(
+        error.toString(),
+      );
+      emit(ShopErrorUpdateUserState());
     });
   }
 }
